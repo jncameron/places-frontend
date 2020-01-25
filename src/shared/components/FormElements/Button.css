@@ -17,8 +17,8 @@
 
 .button:hover,
 .button:active {
-  background: #b4dfe5;
-  border-color: #b4dfe5;
+  background: #f4976c;
+  border-color: #f4976c;
 }
 
 .button--inverse {

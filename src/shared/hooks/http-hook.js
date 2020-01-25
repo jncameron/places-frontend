@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 export const useHttpClient = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -6,39 +6,45 @@ export const useHttpClient = () => {
 
   const activeHttpRequests = useRef([]);
 
-  const sendRequest = async (
-    url,
-    method = "GET",
-    body = null,
-    headers = {}
-  ) => {
-    setIsLoading(true);
-    const httpAbortCtrl = new AbortController();
-    activeHttpRequests.current.push(httpAbortCtrl);
-    try {
-      const response = await fetch(url, {
-        method,
-        body,
-        headers,
-        signal: httpAbortCtrl.signal
-      });
-      const responseData = await response.json();
+  const sendRequest = useCallback(
+    async (url, method = "GET", body = null, headers = {}) => {
+      setIsLoading(true);
+      const httpAbortCtrl = new AbortController();
+      activeHttpRequests.current.push(httpAbortCtrl);
+      try {
+        const response = await fetch(url, {
+          method,
+          body,
+          headers,
+          signal: httpAbortCtrl.signal
+        });
+        const responseData = await response.json();
 
-      if (!response.ok) {
-        throw new Error(responseData.message);
+        activeHttpRequests.current = activeHttpRequests.current.filter(
+          reqCtrl => reqCtrl !== httpAbortCtrl
+        );
+
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
+        setIsLoading(false);
+        return responseData;
+      } catch (err) {
+        setError(err.message);
+        setIsLoading(false);
+
+        throw err;
       }
-    } catch (err) {
-      setError(err.message);
-    }
-    setIsLoading(false);
-  };
+    },
+    []
+  );
 
   const clearError = () => {
     setError(null);
   };
   useEffect(() => {
     return () => {
-      activeHttpRequests.current.forEach(abortCtrl.abort());
+      activeHttpRequests.current.forEach(abortCtrl => abortCtrl.abort());
     };
   }, []);
   return { isLoading, error, sendRequest, clearError };
