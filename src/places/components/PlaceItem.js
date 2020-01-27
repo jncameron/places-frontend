@@ -74,10 +74,7 @@ const PlaceItem = props => {
           </React.Fragment>
         }
       >
-        <p>
-          Do you want to proceed and delete this place? Please note that it
-          can't be undone thereafter.
-        </p>
+        <p>Do you want to proceed and delete this place? It can't be undone.</p>
       </Modal>
       <li className="place-item">
         <Card className="place-item__content">
