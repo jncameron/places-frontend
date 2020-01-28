@@ -31,6 +31,10 @@ const UpdatePlace = () => {
       description: {
         value: "",
         isValid: false
+      },
+      image: {
+        value: null,
+        isValid: false
       }
     },
     false
@@ -40,7 +44,7 @@ const UpdatePlace = () => {
     const fetchPlace = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/places/${placeId}`
+          `${process.env.REACT_APP_BACKEND_URL}/places/${placeId}`
         );
         setLoadedPlace(responseData.place);
         setFormData(
@@ -51,6 +55,10 @@ const UpdatePlace = () => {
             },
             description: {
               value: responseData.place.description,
+              isValid: true
+            },
+            image: {
+              value: responseData.place.image,
               isValid: true
             }
           },
@@ -122,6 +130,13 @@ const UpdatePlace = () => {
             errorText="Please enter a valid description (min. 5 characters)."
             onInput={inputHandler}
             initialValue={loadedPlace.description}
+            initialValid={true}
+          />
+          <ImageUpload
+            id="image"
+            onInput={inputHandler}
+            errorText={"Please provide an image"}
+            initialValue={loadedPlace.image}
             initialValid={true}
           />
           <Button type="submit" disabled={!formState.isValid}>
