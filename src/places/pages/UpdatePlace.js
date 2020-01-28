@@ -132,13 +132,6 @@ const UpdatePlace = () => {
             initialValue={loadedPlace.description}
             initialValid={true}
           />
-          <ImageUpload
-            id="image"
-            onInput={inputHandler}
-            errorText={"Please provide an image"}
-            initialValue={loadedPlace.image}
-            initialValid={true}
-          />
           <Button type="submit" disabled={!formState.isValid}>
             UPDATE PLACE
           </Button>
